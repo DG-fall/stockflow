@@ -1,0 +1,3 @@
+<?php
+namespace App\Http\Controllers; use App\Models\Product; use Symfony\Component\HttpFoundation\StreamedResponse;
+class ExportController extends Controller {public function products():StreamedResponse{$products=Product::with('supplier')->orderBy('sku')->get();return response()->streamDownload(function()use($products){$out=fopen('php://output','w');fputcsv($out,['SKU','Produit','Fournisseur','Quantité','Seuil','Prix unitaire','Emplacement']);foreach($products as $p)fputcsv($out,[$p->sku,$p->name,$p->supplier?->name,$p->quantity,$p->minimum_stock,$p->unit_price,$p->location]);fclose($out);},'stockflow-produits.csv',['Content-Type'=>'text/csv']);}}
